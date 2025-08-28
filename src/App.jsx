@@ -1,0 +1,246 @@
+import React, { useState, useEffect, useRef } from "react";
+import "./style.css";
+import CryptoJS from "crypto-js";
+import {
+  FiClipboard,
+  FiCheckCircle,
+  FiEye,
+  FiEyeOff,
+  FiCopy,
+  FiDownload,
+} from "react-icons/fi";
+
+const COLORS = {
+  background: "#121212",
+  surface: "#1E1E1E",
+  primary: "#BB86FC",
+  secondary: "#03DAC6",
+  text: "#FFFFFF",
+  textSecondary: "#B3B3B3",
+  error: "#CF6679",
+};
+
+export default function App() {
+  const [message, setMessage] = useState("");
+  const [password, setPassword] = useState("");
+  const [result, setResult] = useState("");
+  const [isEncrypting, setIsEncrypting] = useState(true);
+  const [error, setError] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
+  const [isPasted, setIsPasted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [installable, setInstallable] = useState(false);
+
+  const passwordInputRef = useRef(null);
+
+  useEffect(() => {
+    CryptoJS.lib.WordArray.random = function (nBytes) {
+      const uint8Array = new Uint8Array(nBytes);
+      window.crypto.getRandomValues(uint8Array);
+      const words = [];
+      for (let i = 0; i < nBytes; i += 4) {
+        words.push(
+          (uint8Array[i] << 24) |
+            (uint8Array[i + 1] << 16) |
+            (uint8Array[i + 2] << 8) |
+            uint8Array[i + 3]
+        );
+      }
+      return CryptoJS.lib.WordArray.create(words, nBytes);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setInstallable(true);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const processCryptoOperation = (text, key, isEncrypt) => {
+    if (!key || key.length === 0) {
+      setError("Пароль не может быть пустым.");
+      return "";
+    }
+
+    try {
+      if (isEncrypt) {
+        const encrypted = CryptoJS.AES.encrypt(text, key);
+        return encrypted.toString();
+      } else {
+        const decryptedBytes = CryptoJS.AES.decrypt(text, key);
+
+        if (!decryptedBytes || decryptedBytes.sigBytes === 0) {
+          setError("Неверный пароль или поврежденный шифр.");
+          return "";
+        }
+
+        const decryptedText = decryptedBytes.toString(CryptoJS.enc.Utf8);
+        if (!decryptedText.trim()) {
+          setError("Дешифрованный текст пуст или неверный пароль.");
+          return "";
+        }
+        return decryptedText;
+      }
+    } catch (e) {
+      setError("Ошибка: " + e.message);
+      return "";
+    }
+  };
+
+  const handleAction = () => {
+    if (!message || !password) {
+      setError("Введите сообщение и пароль.");
+      setResult("");
+      return;
+    }
+    setError("");
+    const processed = processCryptoOperation(message, password, isEncrypting);
+    setResult(processed);
+    setIsCopied(false);
+  };
+
+  const handleClear = () => {
+    setMessage("");
+    setPassword("");
+    setResult("");
+    setError("");
+    setIsCopied(false);
+  };
+
+  const toggleMode = () => {
+    setIsEncrypting(!isEncrypting);
+    setMessage("");
+    setPassword("");
+    setResult("");
+    setError("");
+  };
+
+  const copyToClipboard = async () => {
+    if (result) {
+      await navigator.clipboard.writeText(result);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    }
+  };
+
+  const pasteFromClipboard = async () => {
+    const text = await navigator.clipboard.readText();
+    setMessage(text);
+    setIsPasted(true);
+    setTimeout(() => {
+      setIsPasted(false);
+      passwordInputRef.current?.focus();
+    }, 100);
+  };
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      setInstallable(false);
+    }
+    setDeferredPrompt(null);
+  };
+
+  return (
+    <div className='container'>
+      <h1 className='title'>Crypt 🔒</h1>
+
+      <div className='toggle-container' onClick={toggleMode}>
+        <div
+          className='toggle-slider'
+          style={{
+            transform: isEncrypting ? "translateX(5px)" : "translateX(120px)",
+          }}
+        />
+        <span className={`toggle-text ${isEncrypting ? "active" : ""}`}>
+          Шифровать
+        </span>
+        <span className={`toggle-text ${!isEncrypting ? "active" : ""}`}>
+          Дешифровать
+        </span>
+      </div>
+
+      <div className='input-wrapper'>
+        <textarea
+          className={`input single-line`}
+          placeholder={
+            isEncrypting ? "Сообщение для шифрования" : "Шифр для дешифрования"
+          }
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button className='icon-button' onClick={pasteFromClipboard}>
+          {isPasted ? (
+            <FiCheckCircle color={COLORS.secondary} />
+          ) : (
+            <FiClipboard color={COLORS.primary} />
+          )}
+        </button>
+      </div>
+
+      <div className='input-wrapper'>
+        <input
+          type={showPassword ? "text" : "password"}
+          className='input'
+          placeholder='Пароль'
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          ref={passwordInputRef}
+        />
+        <button
+          className='icon-button'
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {showPassword ? (
+            <FiEyeOff color={COLORS.primary} />
+          ) : (
+            <FiEye color={COLORS.primary} />
+          )}
+        </button>
+      </div>
+
+      {error && <p className='error'>{error}</p>}
+
+      <button className='action-button' onClick={handleAction}>
+        {isEncrypting ? "Зашифровать" : "Расшифровать"}
+      </button>
+      <button className='clear-button' onClick={handleClear}>
+        Очистить
+      </button>
+
+      {result && (
+        <div className='result-container'>
+          <p className='result-label'>
+            {isEncrypting ? "Ваш шифр:" : "Результат:"}
+          </p>
+          <div className='result-content'>
+            <pre className={isEncrypting ? "result-shyf" : "result-text"}>
+              {result}
+            </pre>
+            <button className='icon-button' onClick={copyToClipboard}>
+              {isCopied ? (
+                <FiCheckCircle color={COLORS.secondary} />
+              ) : (
+                <FiCopy color={COLORS.primary} />
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {installable && (
+        <button className='install-button' onClick={handleInstall}>
+          <FiDownload /> Установить приложение
+        </button>
+      )}
+    </div>
+  );
+}

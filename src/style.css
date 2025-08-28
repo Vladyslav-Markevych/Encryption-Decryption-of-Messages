@@ -1,0 +1,201 @@
+:root {
+  --bg: #121212;
+  --surface: #1e1e1e;
+  --primary: #bb86fc;
+  --secondary: #03dac6;
+  --text: #ffffff;
+  --textSecondary: #b3b3b3;
+  --error: #cf6679;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.title {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 15px;
+}
+
+.input {
+  width: 100%;
+  min-height: 50px;
+  background: var(--surface);
+  border: 1px solid #333;
+  border-radius: 12px;
+  color: var(--text);
+  padding: 11px 33px 8px 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.input.single-line {
+  height: 50px;
+  resize: none;
+  overflow: hidden;
+}
+
+.input-wrapper .icon-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: var(--primary);
+}
+
+.toggle-container {
+  width: 250px;
+  height: 50px;
+  background: var(--surface);
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: relative;
+  margin-bottom: 30px;
+  cursor: pointer;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  width: 125px;
+  height: 42px;
+  border-radius: 21px;
+  background: var(--primary);
+  transition: transform 0.3s ease;
+}
+
+.toggle-text {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--textSecondary);
+  z-index: 1;
+}
+
+.toggle-text.active {
+  color: var(--bg);
+}
+
+.action-button {
+  background: var(--primary);
+  color: var(--bg);
+  padding: 15px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+  max-width: 500px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.clear-button {
+  background: var(--surface);
+  color: var(--primary);
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--primary);
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+  max-width: 500px;
+  font-size: 16px;
+}
+
+.install-button {
+  margin-top: 20px;
+  background: var(--secondary);
+  color: var(--bg);
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* === ERROR === */
+.error {
+  color: var(--error);
+  margin: 5px 0 10px;
+}
+
+/* === RESULT === */
+.result-container {
+  background: var(--surface);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.result-label {
+  font-size: 16px;
+  color: var(--textSecondary);
+  margin-bottom: 10px;
+}
+
+.result-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.result-text {
+  flex: 1;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: monospace;
+  overflow-x: auto;
+}
+
+.result-shyf {
+  flex: 1;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: monospace;
+  overflow-x: auto;
+  max-height: 50px;
+}
+
+.result-content .icon-button {
+  position: static;
+  transform: none;
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--primary);
+}
