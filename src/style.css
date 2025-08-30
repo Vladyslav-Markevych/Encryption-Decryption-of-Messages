@@ -87,6 +87,9 @@ body {
 padding-top: 2px;
 }
 
+.pass-input {
+  padding: 11px 75px 8px 8px;
+}
 
 .toggle-container {
   width: 250px;
