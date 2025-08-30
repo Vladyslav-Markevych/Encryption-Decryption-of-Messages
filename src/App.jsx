@@ -29,6 +29,7 @@ export default function App() {
   const [error, setError] = useState("");
   const [isCopied, setIsCopied] = useState(false);
   const [isPasted, setIsPasted] = useState(false);
+  const [isPastedPass, setIsPastedPass] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -126,7 +127,7 @@ export default function App() {
     if (result) {
       await navigator.clipboard.writeText(result);
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
+      setTimeout(() => setIsCopied(false), 1000);
     }
   };
 
@@ -143,8 +144,8 @@ export default function App() {
   const pasteToPassword = async () => {
     const text = await navigator.clipboard.readText();
     setPassword(text);
-    setIsPasted(true);
-    setTimeout(() => setIsPasted(false), 2000);
+    setIsPastedPass(true);
+    setTimeout(() => setIsPastedPass(false), 100);
   };
 
   const handleInstall = async () => {
@@ -215,7 +216,7 @@ export default function App() {
             )}
           </button>
           <button className='icon-button ' onClick={pasteToPassword}>
-            {isPasted ? (
+            {isPastedPass ? (
               <FiCheckCircle color={COLORS.secondary} size={18} />
             ) : (
               <FiClipboard color={COLORS.primary} size={18} />
