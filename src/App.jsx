@@ -9,6 +9,7 @@ import {
   FiCopy,
   FiDownload,
 } from "react-icons/fi";
+import { Analytics } from "@vercel/analytics/react";
 
 const COLORS = {
   background: "#121212",
@@ -157,7 +158,7 @@ export default function App() {
         <div
           className='toggle-slider'
           style={{
-            transform: isEncrypting ? "translateX(5px)" : "translateX(120px)",
+            transform: isEncrypting ? "translateX(5px)" : "translateX(131px)",
           }}
         />
         <span className={`toggle-text ${isEncrypting ? "active" : ""}`}>
@@ -177,11 +178,11 @@ export default function App() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button className='icon-button' onClick={pasteFromClipboard}>
+        <button className='icon-button-left' onClick={pasteFromClipboard}>
           {isPasted ? (
-            <FiCheckCircle color={COLORS.secondary} />
+            <FiCheckCircle color={COLORS.secondary} size={18} />
           ) : (
-            <FiClipboard color={COLORS.primary} />
+            <FiClipboard color={COLORS.primary} size={18} />
           )}
         </button>
       </div>
@@ -195,16 +196,25 @@ export default function App() {
           onChange={(e) => setPassword(e.target.value)}
           ref={passwordInputRef}
         />
-        <button
-          className='icon-button'
-          onClick={() => setShowPassword(!showPassword)}
-        >
-          {showPassword ? (
-            <FiEyeOff color={COLORS.primary} />
-          ) : (
-            <FiEye color={COLORS.primary} />
-          )}
-        </button>
+        <div className='icon-buttons-right'>
+          <button
+            className='icon-button'
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? (
+              <FiEyeOff className='mt-2' color={COLORS.primary} size={18} />
+            ) : (
+              <FiEye className='mt-2' color={COLORS.primary} size={18} />
+            )}
+          </button>
+          <button className='icon-button ' onClick={pasteFromClipboard}>
+            {isPasted ? (
+              <FiCheckCircle color={COLORS.secondary} size={18} />
+            ) : (
+              <FiClipboard color={COLORS.primary} size={18} />
+            )}
+          </button>
+        </div>
       </div>
 
       {error && <p className='error'>{error}</p>}
@@ -227,9 +237,9 @@ export default function App() {
             </pre>
             <button className='icon-button' onClick={copyToClipboard}>
               {isCopied ? (
-                <FiCheckCircle color={COLORS.secondary} />
+                <FiCheckCircle color={COLORS.secondary} size={18} />
               ) : (
-                <FiCopy color={COLORS.primary} />
+                <FiCopy color={COLORS.primary} size={18} />
               )}
             </button>
           </div>
@@ -241,6 +251,7 @@ export default function App() {
           <FiDownload /> Установить приложение
         </button>
       )}
+      <Analytics />
     </div>
   );
 }
