@@ -130,7 +130,7 @@ export default function App() {
     }
   };
 
-  const pasteFromClipboard = async () => {
+  const pasteToMessage = async () => {
     const text = await navigator.clipboard.readText();
     setMessage(text);
     setIsPasted(true);
@@ -138,6 +138,13 @@ export default function App() {
       setIsPasted(false);
       passwordInputRef.current?.focus();
     }, 100);
+  };
+
+  const pasteToPassword = async () => {
+    const text = await navigator.clipboard.readText();
+    setPassword(text);
+    setIsPasted(true);
+    setTimeout(() => setIsPasted(false), 2000);
   };
 
   const handleInstall = async () => {
@@ -178,7 +185,7 @@ export default function App() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button className='icon-button-left' onClick={pasteFromClipboard}>
+        <button className='icon-button-left' onClick={pasteToMessage}>
           {isPasted ? (
             <FiCheckCircle color={COLORS.secondary} size={18} />
           ) : (
@@ -207,7 +214,7 @@ export default function App() {
               <FiEye className='mt-2' color={COLORS.primary} size={18} />
             )}
           </button>
-          <button className='icon-button ' onClick={pasteFromClipboard}>
+          <button className='icon-button ' onClick={pasteToPassword}>
             {isPasted ? (
               <FiCheckCircle color={COLORS.secondary} size={18} />
             ) : (
