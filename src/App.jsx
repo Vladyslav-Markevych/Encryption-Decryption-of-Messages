@@ -179,7 +179,7 @@ export default function App() {
 
       <div className='input-wrapper'>
         <textarea
-          className={`input single-line`}
+          className={`input ${isEncrypting ? '' : 'single-line'}`}
           placeholder={
             isEncrypting ? "Сообщение для шифрования" : "Шифр для дешифрования"
           }
