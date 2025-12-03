@@ -90,6 +90,21 @@ padding-top: 2px;
 .pass-input {
   padding: 11px 75px 8px 8px;
 }
+.pass-input.no-copy {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  /* Убирает nativе long-press menu на iOS Safari */
+  -webkit-touch-callout: none;
+}
+
+/* На случай, если браузер всё же подсвечивает selection */
+.pass-input.no-copy::selection {
+  background: transparent;
+  color: inherit;
+}
 
 .toggle-container {
   width: 250px;

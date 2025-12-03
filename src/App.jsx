@@ -227,6 +227,10 @@ export default function App() {
               (e.ctrlKey || e.metaKey) && (e.key === "x" || e.key === "X");
             if (isCopy || isCut) e.preventDefault();
           }}
+          onSelect={(e) => {
+            const el = e.target;
+            try { el.setSelectionRange(el.value.length, el.value.length); } catch(_) {}
+          }}
         />
         <div className="icon-buttons-right">
           <button
