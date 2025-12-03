@@ -8,6 +8,7 @@ import {
   FiEyeOff,
   FiCopy,
   FiDownload,
+  FiCornerUpLeft,
 } from "react-icons/fi";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -36,6 +37,7 @@ export default function App() {
   const [installable, setInstallable] = useState(false);
 
   const passwordInputRef = useRef(null);
+  const messageInputRef = useRef(null);
 
   useEffect(() => {
     CryptoJS.lib.WordArray.random = function (nBytes) {
@@ -107,6 +109,17 @@ export default function App() {
     setIsCopied(false);
   };
 
+  const handleReply = () => {
+    setIsEncrypting(true);
+    setMessage("");
+    setResult("");
+    setError("");
+    setIsCopied(false);
+    setTimeout(() => {
+      messageInputRef.current?.focus();
+    }, 50);
+  };
+
   const handleClear = () => {
     setMessage("");
     setPassword("");
@@ -159,12 +172,12 @@ export default function App() {
   };
 
   return (
-    <div className='container'>
-      <h1 className='title'>Crypt 🔒</h1>
+    <div className="container">
+      <h1 className="title">Crypt 🔒</h1>
 
-      <div className='toggle-container' onClick={toggleMode}>
+      <div className="toggle-container" onClick={toggleMode}>
         <div
-          className='toggle-slider'
+          className="toggle-slider"
           style={{
             transform: isEncrypting ? "translateX(5px)" : "translateX(131px)",
           }}
@@ -177,16 +190,17 @@ export default function App() {
         </span>
       </div>
 
-      <div className='input-wrapper'>
+      <div className="input-wrapper">
         <textarea
-          className={`input ${isEncrypting ? '' : 'single-line'}`}
+          ref={messageInputRef}
+          className={`input ${isEncrypting ? "" : "single-line"}`}
           placeholder={
             isEncrypting ? "Сообщение для шифрования" : "Шифр для дешифрования"
           }
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button className='icon-button-left' onClick={pasteToMessage}>
+        <button className="icon-button-left" onClick={pasteToMessage}>
           {isPasted ? (
             <FiCheckCircle color={COLORS.secondary} size={18} />
           ) : (
@@ -195,27 +209,37 @@ export default function App() {
         </button>
       </div>
 
-      <div className='input-wrapper'>
+      <div className="input-wrapper">
         <input
           type={showPassword ? "text" : "password"}
-          className='input pass-input'
-          placeholder='Пароль'
+          className="input pass-input"
+          placeholder="Пароль"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           ref={passwordInputRef}
+          onCopy={(e) => e.preventDefault()}
+          onCut={(e) => e.preventDefault()}
+          onContextMenu={(e) => e.preventDefault()}
+          onKeyDown={(e) => {
+            const isCopy =
+              (e.ctrlKey || e.metaKey) && (e.key === "c" || e.key === "C");
+            const isCut =
+              (e.ctrlKey || e.metaKey) && (e.key === "x" || e.key === "X");
+            if (isCopy || isCut) e.preventDefault();
+          }}
         />
-        <div className='icon-buttons-right'>
+        <div className="icon-buttons-right">
           <button
-            className='icon-button'
+            className="icon-button"
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? (
-              <FiEyeOff className='mt-2' color={COLORS.primary} size={18} />
+              <FiEyeOff className="mt-2" color={COLORS.primary} size={18} />
             ) : (
-              <FiEye className='mt-2' color={COLORS.primary} size={18} />
+              <FiEye className="mt-2" color={COLORS.primary} size={18} />
             )}
           </button>
-          <button className='icon-button ' onClick={pasteToPassword}>
+          <button className="icon-button " onClick={pasteToPassword}>
             {isPastedPass ? (
               <FiCheckCircle color={COLORS.secondary} size={18} />
             ) : (
@@ -225,25 +249,37 @@ export default function App() {
         </div>
       </div>
 
-      {error && <p className='error'>{error}</p>}
+      {error && <p className="error">{error}</p>}
 
-      <button className='action-button' onClick={handleAction}>
+      <button className="action-button" onClick={handleAction}>
         {isEncrypting ? "Зашифровать" : "Расшифровать"}
       </button>
-      <button className='clear-button' onClick={handleClear}>
+      <button className="clear-button" onClick={handleClear}>
         Очистить
       </button>
 
       {result && (
-        <div className='result-container'>
-          <p className='result-label'>
+        <div className="result-container">
+          <p className="result-label">
             {isEncrypting ? "Ваш шифр:" : "Результат:"}
           </p>
-          <div className='result-content'>
+          <div className="result-content">
             <pre className={isEncrypting ? "result-shyf" : "result-text"}>
               {result}
             </pre>
-            <button className='icon-button' onClick={copyToClipboard}>
+
+            {!isEncrypting && (
+              <button
+                className="icon-button"
+                title="Ответить"
+                onClick={handleReply}
+                style={{ marginRight: 8 }}
+              >
+                <FiCornerUpLeft color={COLORS.primary} size={18} />
+              </button>
+            )}
+
+            <button className="icon-button" onClick={copyToClipboard}>
               {isCopied ? (
                 <FiCheckCircle color={COLORS.secondary} size={18} />
               ) : (
@@ -255,7 +291,7 @@ export default function App() {
       )}
 
       {installable && (
-        <button className='install-button' onClick={handleInstall}>
+        <button className="install-button" onClick={handleInstall}>
           <FiDownload /> Установить приложение
         </button>
       )}
