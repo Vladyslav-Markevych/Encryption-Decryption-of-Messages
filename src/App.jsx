@@ -212,7 +212,7 @@ export default function App() {
       <div className="input-wrapper">
         <input
           type={showPassword ? "text" : "password"}
-          className="input pass-input"
+          className="input pass-input no-copy"
           placeholder="Пароль"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
