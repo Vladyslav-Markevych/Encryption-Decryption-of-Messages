@@ -4,6 +4,7 @@ import App from "./App";
 
 // импорт registerSW из vite-plugin-pwa
 import { registerSW } from "virtual:pwa-register";
+import Snowfall from "react-snowfall";
 
 const updateSW = registerSW({
   onNeedRefresh() {
@@ -18,6 +19,7 @@ const updateSW = registerSW({
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    <Snowfall color="white"/>
     <App />
   </React.StrictMode>
 );
